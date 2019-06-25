@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Articles.com</title>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+</head>
+<body>
+    <a href="{% url 'blog-list' %}">Home</a>
+    <a href="{% url 'new-blog' %}">Create a new Article</a>
+    <hr>
+    <br>
+    {% block content %}
+    {% endblock %}
+
+</body>
+</html>

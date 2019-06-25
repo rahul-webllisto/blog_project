@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+    {% block content %}        
+        <h2>{{ article.title }}</h2><br>
+        {{ article.description }}<br>
+        {{ article.created_at }}
+        {{ article.author }}        
+        <br><br>
+        <hr>
+        <h3>Comments</h3>
+        {% for comment in article.comments.all %}        
+            {{ comment.created_at }}
+            <!-- <strong>{{ comment.author }}</strong> -->
+            <p>{{ comment.text|linebreaks }}</p>        
+        {% empty %}
+            <p>No comments here yet :(</p>
+        {% endfor %}
+        <button onClick="divFunction()" >Add a comment</button>   
+        <form method="post" id="commentForm">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit">Submit</button>
+        </form>     
+
+        <script type="text/javascript">
+            
+            jQuery('#commentForm').hide();
+                 function divFunction(){
+               jQuery('#commentForm').show();
+            }
+
+              $(function () {
+                    $('#commentForm').on('submit', function (e) {                        
+                        
+                      // e.preventDefault();
+
+                      $.ajax({
+                        type: 'post',
+                        url: 'http://127.0.0.1:8000/addcomment/'+'{{ article.pk }}',
+                        data: $('form').serialize(),
+                        success: function () {
+                           location.reload();
+                        }
+                      });
+
+                    });
+
+                  });
+        </script>
+    {% endblock %}
+
