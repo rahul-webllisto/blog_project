@@ -2,7 +2,7 @@
     {% block content %}
         {% for article in articles %}
             <a href="{% url 'blog-detail' article.pk %}">{{ article.title }}</a><br>
-            {{ article.description }}<br>
+            {{ article.description|slice:":20" }}...<br>
             {{ article.created_at }}
             {{ article.author }}<br>
             <a href="{% url 'blog-detail' article.pk %}">Comments: {{ article.comments.count }}</a>
