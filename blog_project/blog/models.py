@@ -14,13 +14,13 @@ class Article(models.Model):
 
 
 
-
 class Comment(models.Model):
     post = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments')
     # author = models.CharField(max_length=200)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
-    is_approved = models.BooleanField(default=False)
+    is_approved = models.BooleanField(default=False)    
+
 
     def approve(self):
         self.is_approved = True
@@ -28,3 +28,6 @@ class Comment(models.Model):
 
     def __str__(self):
         return self.text
+
+    class Meta:
+        ordering = ['-created_at']

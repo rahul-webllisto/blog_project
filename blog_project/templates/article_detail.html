@@ -7,10 +7,12 @@
         <br><br>
         <hr>
         <h3>Comments</h3>
-        {% for comment in article.comments.all %}        
-            {{ comment.created_at }}
+        {% for comment in article.comments.all %}
+            {% if comment.is_approved %}
+                {{ comment.created_at }}
             <!-- <strong>{{ comment.author }}</strong> -->
-            <p>{{ comment.text|linebreaks }}</p>        
+            <p>{{ comment.text|linebreaks }}</p>
+            {% endif %}                  
         {% empty %}
             <p>No comments here yet :(</p>
         {% endfor %}
