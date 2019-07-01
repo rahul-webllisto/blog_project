@@ -19,7 +19,9 @@ def blog_list_api(request):
     
     if request.method == 'GET':
         articles = Article.objects.all()
-        serializer = ArticleSerializer(articles, many=True)
+        serializer = ArticleSerializer(articles, many=True)        
+        for article in range(len(serializer.data)):            
+            del serializer.data[article]['comments']
         return Response(serializer.data)
     
     elif request.method == 'POST':
@@ -42,7 +44,7 @@ def blog_detail_api(request,pk):
         return Response(status=404)
 
     if request.method == 'GET':
-        serializer = ArticleSerializer(article)
+        serializer = ArticleSerializer(article)        
         return Response(serializer.data)
 
     elif request.method == 'PUT':        

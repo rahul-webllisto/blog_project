@@ -7,6 +7,7 @@ class ArticleSerializer(serializers.Serializer):
     title = serializers.CharField(max_length=20)
     description = serializers.CharField(max_length=100)
     comments_count = serializers.SerializerMethodField()
+    comments = serializers.StringRelatedField(many=True)
 
 
     def get_comments_count(self,obj):        
@@ -31,22 +32,3 @@ class ArticleSerializer(serializers.Serializer):
 
 
 
-class CommentSerializer(serializers.Serializer):
-    id = serializers.IntegerField(read_only=True)
-    text = serializers.CharField(max_length=100)    
-
-    def create(self, validated_data):
-        """
-        Create and return a new `Comment` instance, given the validated data.
-        """
-        return Comment.objects.create(**validated_data)
-
-
-    def update(self, instance, validated_data):
-        """
-        Update and return an existing `Comment` instance, given the validated data.
-        """
-        import pdb;pdb.set_trace()
-        instance.text = validated_data.get('text', instance.text)                
-        instance.save()
-        return instance
