@@ -24,6 +24,6 @@ urlpatterns = [
     path('<int:pk>/', blog_views.blog_detail,name="blog-detail"),
     path('create/', blog_views.create_blog,name="new-blog"),
     path('signup/', acc_views.sign_up,name="login"),
-    path('addcomment/<pk>', blog_views.add_comment,name="add-comment"),
+    path('addcomment/<int:pk>', blog_views.add_comment,name="add-comment"),
     path('api/', include('blog.urls')),
 ]

@@ -16,6 +16,7 @@
         {% empty %}
             <p>No comments here yet :(</p>
         {% endfor %}
+        
         <button onClick="divFunction()" >Add a comment</button>   
         <form method="post" id="commentForm">
             {% csrf_token %}
@@ -37,7 +38,7 @@
 
                       $.ajax({
                         type: 'post',
-                        url: 'http://127.0.0.1:8000/addcomment/'+'{{ article.pk }}',
+                        url: "{% url 'add-comment' article.pk %}",
                         data: $('form').serialize(),
                         success: function () {
                            location.reload();

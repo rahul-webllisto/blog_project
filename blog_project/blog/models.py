@@ -12,6 +12,7 @@ class Article(models.Model):
     def __str__(self):
         return self.title
 
+    
 
 
 class Comment(models.Model):
@@ -22,12 +23,15 @@ class Comment(models.Model):
     is_approved = models.BooleanField(default=False)    
 
 
+
+    def __str__(self):
+        return self.text    
+        
+
     def approve(self):
         self.is_approved = True
         self.save()
 
-    def __str__(self):
-        return self.text
 
     class Meta:
         ordering = ['-created_at']

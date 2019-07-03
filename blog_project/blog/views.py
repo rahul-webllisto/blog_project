@@ -14,7 +14,7 @@ def blog_list(request):
 
 
 
-@api_view(['GET', 'POST', 'PUT'])
+@api_view(['GET', 'POST'])
 def blog_list_api(request):
     
     if request.method == 'GET':
@@ -36,7 +36,7 @@ def blog_list_api(request):
 @api_view(['GET', 'PUT', 'DELETE'])
 def blog_detail_api(request,pk):
     """
-    Retrieve, update or delete a code snippet.
+    Retrieve, update or delete a article.
     """
     try:
         article = Article.objects.get(pk=pk)
@@ -48,8 +48,8 @@ def blog_detail_api(request,pk):
         return Response(serializer.data)
 
     elif request.method == 'PUT':        
-        serializer = ArticleSerializer(article, data=request.data)
-        if serializer.is_valid():
+        serializer = ArticleSerializer(article, data=request.data, partial=True)        
+        if serializer.is_valid():            
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
@@ -88,3 +88,27 @@ def add_comment(request,pk):
     else:
         form = CreateCommentForm()
         return render(request, 'add_comment.html', {'form': form})
+
+
+
+@api_view(['POST'])
+def add_comment_api(request,pk,):
+    """
+    create, update or delete a comment.
+    """
+    try:
+        article = Article.objects.get(pk=pk)        
+    except Article.DoesNotExist:
+        return Response(status=404)
+    
+    if request.method == 'POST':                
+        serializer = CommentSerializer(data=request.data)        
+        if serializer.is_valid():
+            serializer.save(post=article)            
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+
+@api_view(['PUT', 'DELETE'])
+def add_comment_api(request,pk,):
+    pass
