@@ -7,23 +7,23 @@ from rest_framework.response import Response
 # Create your views here.
 
 
-
 def blog_list(request):
     articles = Article.objects.all().order_by('-created_at')
-    return render(request, 'article_list.html', {'articles':articles})
-
+    return render(request, 'article_list.html', {'articles': articles})
 
 
 @api_view(['GET', 'POST'])
 def blog_list_api(request):
-    
+    """
+    API view for listing all the articles and creating a new article.
+    """
     if request.method == 'GET':
         articles = Article.objects.all()
-        serializer = ArticleSerializer(articles, many=True)        
-        for article in range(len(serializer.data)):            
+        serializer = ArticleSerializer(articles, many=True)
+        for article in range(len(serializer.data)):
             del serializer.data[article]['comments']
         return Response(serializer.data)
-    
+
     elif request.method == 'POST':
         serializer = ArticleSerializer(data=request.data)
         if serializer.is_valid():
@@ -31,12 +31,11 @@ def blog_list_api(request):
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
-        
-        
+
 @api_view(['GET', 'PUT', 'DELETE'])
-def blog_detail_api(request,pk):
+def blog_detail_api(request, pk):
     """
-    Retrieve, update or delete a article.
+    Retrieve, update or delete an article.
     """
     try:
         article = Article.objects.get(pk=pk)
@@ -44,12 +43,12 @@ def blog_detail_api(request,pk):
         return Response(status=404)
 
     if request.method == 'GET':
-        serializer = ArticleSerializer(article)        
+        serializer = ArticleSerializer(article)
         return Response(serializer.data)
 
-    elif request.method == 'PUT':        
-        serializer = ArticleSerializer(article, data=request.data, partial=True)        
-        if serializer.is_valid():            
+    elif request.method == 'PUT':
+        serializer = ArticleSerializer(article, data=request.data, partial=True)
+        if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=400)
@@ -59,11 +58,11 @@ def blog_detail_api(request,pk):
         return Response(status=204)
 
 
+def blog_detail(request, pk):
+    article = Article.objects.get(pk=pk)
+    form = CreateCommentForm()
+    return render(request, 'article_detail.html', {'article': article, 'form': form})
 
-def blog_detail(request,pk):
-    article = Article.objects.get(pk=pk) 
-    form = CreateCommentForm()   
-    return render(request, 'article_detail.html', {'article':article, 'form': form})
 
 def create_blog(request):
     if request.method == 'POST':
@@ -76,7 +75,7 @@ def create_blog(request):
         return render(request, 'create_article.html', {'form': form})
 
 
-def add_comment(request,pk):        
+def add_comment(request, pk):
     article = Article.objects.get(pk=pk)
     if request.method == 'POST':
         form = CreateCommentForm(request.POST)
@@ -90,25 +89,38 @@ def add_comment(request,pk):
         return render(request, 'add_comment.html', {'form': form})
 
 
-
 @api_view(['POST'])
-def add_comment_api(request,pk,):
+def add_comment_api(request, pk,):
     """
     create, update or delete a comment.
     """
     try:
-        article = Article.objects.get(pk=pk)        
+        article = Article.objects.get(pk=pk)
     except Article.DoesNotExist:
         return Response(status=404)
-    
-    if request.method == 'POST':                
-        serializer = CommentSerializer(data=request.data)        
+
+    if request.method == 'POST':
+        serializer = CommentSerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save(post=article)            
+            serializer.save(post=article)
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
 
 
 @api_view(['PUT', 'DELETE'])
-def add_comment_api(request,pk,):
-    pass
+def edit_comment_api(request, pk,):
+    try:
+        comment = Comment.objects.get(pk=pk)
+    except Comment.DoesNotExist:
+        return Response(status=404)
+
+    if request.method == 'PUT':
+        serializer = CommentSerializer(comment, data=request.data)
+        if serializer.is_valid():
+            serializer.save(post=comment.post)
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+
+    elif request.method == 'DELETE':
+        comment.delete()
+        return Response({"message": "Item Deleted!"}, status=204)
