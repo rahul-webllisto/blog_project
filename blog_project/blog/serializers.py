@@ -55,7 +55,7 @@ class CommentSerializer(serializers.Serializer):
         """
         Update and return an existing `Comment` instance, given the validated data.
         """     
-        instance.post = instance
-        instance.text = validated_data.get('title', instance.text)                
+        
+        instance.text = validated_data.get('text', instance.text)                
         instance.save()
         return instance
