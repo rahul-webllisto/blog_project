@@ -7,12 +7,12 @@ from django.contrib.auth.models import (
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, username=None, password=None):
+    def create_user(self, email=None, password=None):
         """
         Creates and saves a User with the given email and password.
         """
         user = self.model(
-            username=self.normalize_email(username),
+            email=self.normalize_email(email),
         )
 
         user.set_password(password)
@@ -21,12 +21,12 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_staffuser(self, username, password):
+    def create_staffuser(self, email, password):
         """
         Creates and saves a staff user with the given email and password.
         """
         user = self.create_user(
-            username=username,
+            email=email,
             password=password,
         )
         user.is_active = True
@@ -35,16 +35,16 @@ class UserManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password):
+    def create_superuser(self, email, password):
         # import pdb; pdb.set_trace()
         """
-        Creates and saves a superuser with the given username and password.
+        Creates and saves a superuser with the given email and password.
         """
         user = self.create_staffuser(
-            username=username,
+            email=email,
             password=password,
         )
-        user.username = username
+        user.email = email
         
         user.is_staff = True
         user.is_admin = True
@@ -54,36 +54,34 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser):
-    username = models.EmailField(
+    email = models.EmailField(
         max_length=255,
         unique=True,
         null=False, blank=False
-    )
-    full_name = models.CharField(
-        ('full_name'), max_length=256, blank=True, null=True)    
+    )       
     is_active = models.BooleanField(default=True)    
     is_staff = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
     
 
-    USERNAME_FIELD = 'username'
+    USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
     objects = UserManager()
 
     def __str__(self):
-        return str(self.get_full_name())
+        return str(self.email)
 
-    def get_full_name(self):
-        '''
-        Returns the first_name plus the last_name, with a space in between.
-        '''
-        return self.full_name
+    # def get_full_name(self):
+    #     '''
+    #     Returns the first_name plus the last_name, with a space in between.
+    #     '''
+    #     return self.full_name
 
-    def get_short_name(self):
-        '''
-        Returns the short name for the user.
-        '''
-        return self.full_name
+    # def get_short_name(self):
+    #     '''
+    #     Returns the short name for the user.
+    #     '''
+    #     return self.full_name
 
     def is_staff(self):
         "Is the user a member of staff?"
